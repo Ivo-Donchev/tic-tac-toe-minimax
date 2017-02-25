@@ -4,11 +4,7 @@ class Game:
         [' ', ' ', ' '],
         [' ', ' ', ' ']
     ]
-    # board = [
-    #     ['X', 'X', 'X'],
-    #     ['O', 'X', 'X'],
-    #     ['X', 'O', 'X']
-    # ]
+
     board_size = 3
 
     def __init__(self, *,
@@ -39,19 +35,28 @@ class Game:
         self.end_of_turn()
 
     def __current_player_wins(self):
-        for row in self.board:
-            if ''.join(row) == self.current_player.sign * 3:
-                    return True
-
+        rows = [row for row in self.board]
         columns = [[row[i] for row in self.board] for i in range(0, self.board_size)]
-        for column in self.board:
-            if ''.join(column) == self.current_player.sign * 3:
-                    return True
+        diagonals = [
+            [self.board[0][0], self.board[1][1], self.board[2][2]],
+            [self.board[0][2], self.board[1][1], self.board[2][0]]
+        ]
+
+        for subset in rows + columns + diagonals:
+            if ''.join(subset) == self.current_player.sign * 3:
+                return True
 
         return False
 
+    def __board_is_full(self):
+        for row in self.board:
+            for cell in row:
+                if cell == ' ':
+                    return False
+        return True
+
     def is_end(self):
-        return self.__current_player_wins()
+        return self.__current_player_wins() or self.__board_is_full()
 
     def __repr__(self):
         return """
